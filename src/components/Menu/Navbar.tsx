@@ -15,25 +15,28 @@ const items: MenuItem[] = [
   {
     label: `Municipio de ${process.env.REACT_APP_NOMBRE_MUNICIPIO}`,
     key: 'logo',
-    style: { marginRight: 'auto', opacity: '0.5', pointerEvents: 'none' },
+    style: { marginRight: 'auto', opacity: '0.5', pointerEvents: 'none', color: 'white' },
   },
   {
-    label: (<Link to={'/infracciones'}>Infracciones</Link>),
+    label: (<Link to={'/'}>Infracciones</Link>),
     key: 'infracciones',
     icon: <CarOutlined />,
+    style: { color: 'white' },
   },
   {
     label: (<Link to={'/contact'}>Contacto</Link>),
     key: 'contact',
     icon: <WhatsAppOutlined />,
-  }  
+    style: { color: 'white' },
+  }
 ];
 
 const NavBar = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetStateAction<MenuTheme>> }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const [current, setCurrent] = useState('');  
-  const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();  
+  const [current, setCurrent] = useState('');
+  const [collapsed, setCollapsed] = useState(true);
+  const location = useLocation();
+  let backgroundColor = props.theme === 'light' ? '#1d1d1d' : undefined  
 
   useEffect(() => {
     const handleResize = () => {
@@ -62,26 +65,26 @@ const NavBar = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetSta
 
   return (
     <div>
-      <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items.filter(e => e?.key !== 'menu-sidebar')} theme={props.theme} style={{ display: screenWidth <= 750 ? 'none' : 'flex' }} />
+      <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items.filter(e => e?.key !== 'menu-sidebar')} theme = { props.theme } style={{ display: screenWidth <= 750 ? 'none' : 'flex', padding: '10px 0', backgroundColor: backgroundColor }} />
       <Menu
         defaultSelectedKeys={[current]}
         defaultOpenKeys={[current]}
         mode="inline"
-        theme="dark"
+        theme={props.theme}
         inlineCollapsed={collapsed}
         items={items.filter(e => e?.key !== 'logo')}
         style={{ marginLeft: 'auto', display: screenWidth <= 750 ? 'flex' : 'none', flexDirection: 'column', width: collapsed ? '15%' : '25%' }}
         onClick={onClick}
       />
-      <div style = {{ margin: '15px 15px' }}>
-          <Switch
-            checked = { props.theme === 'dark' }
-            onChange = { changeTheme }
-            checkedChildren = "Dark"
-            unCheckedChildren = "Light"
-            style = {{ display: 'flex', marginLeft: 'auto' }}
-          />      
-          </div>
+      <div style={{ margin: '15px 15px' }}>
+        <Switch
+          checked={props.theme === 'dark'}
+          onChange={changeTheme}
+          checkedChildren="Dark"
+          unCheckedChildren="Light"
+          style={{ display: 'flex', marginLeft: 'auto' }}
+        />
+      </div>
     </div>
   )
 };

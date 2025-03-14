@@ -6,7 +6,7 @@ const FormContact = () => {
     return(
         <Content className = 'content'>
             <Space className = 'space'>
-                <h3>Página en construcción Home</h3>
+                <h3 style = {{ color: 'black' }}>Página en construcción Home</h3>
             </Space>
         </Content>
     )

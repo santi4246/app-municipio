@@ -9,10 +9,7 @@ function App() {
     <MainLayout>
       {({ theme, setTheme }) => (
         <Routes>          
-          <Route 
-            path="/infracciones" 
-            element={<Home theme = { theme } setTheme = { setTheme } />} 
-          />
+          <Route path="/" element={<Home theme = { theme } setTheme = { setTheme } />} />
           <Route path = "/contact" element = { <FormContact /> } />
         </Routes>
       )}
