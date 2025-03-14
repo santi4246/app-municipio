@@ -1,8 +1,17 @@
-import { Form, Input, Space } from 'antd';
+import { Form, Input, MenuTheme, Space } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import "../../App.css";
+import { useEffect } from 'react';
 
-const Home = () => {    
+interface HomeProps {
+    theme: MenuTheme;
+    setTheme: React.Dispatch<React.SetStateAction<MenuTheme>>;
+  }
+
+const Home = ({ theme, setTheme }: HomeProps) => {
+    useEffect(() => {
+        console.log("Tema: ", theme);
+    }, []);
     return (
         <Content className = 'content'>
             <Space className = 'space'>                
