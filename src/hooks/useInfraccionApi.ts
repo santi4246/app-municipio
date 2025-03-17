@@ -123,7 +123,7 @@ const useInfraccionApi = () => {
                         "X-ClientId": `${process.env.REACT_APP_CLIENT_ID_HEADER ?? ""}`
                     }
                 });
-                return { data: { value: response.data } }
+                return { data: { value: response.data.value } }
             } catch (error: any | AxiosError) {
                 return error.message
             }

@@ -1,10 +1,11 @@
 import type { FormProps } from 'antd';
-import { Button, Form, Input, MenuTheme, Space, } from 'antd';
+import { Button, Form, Input, MenuTheme, Space, Table, } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import { Content } from 'antd/es/layout/layout';
 import "../../App.css";
 import { useEffect, useState } from 'react';
-import useInfraccionApi, { ActionResult, Infraccion } from '../../hooks/useInfraccionApi';
+import useInfraccionApi, { Infraccion } from '../../hooks/useInfraccionApi';
+import moment from 'moment';
 
 
 interface HomeProps {
@@ -19,6 +20,9 @@ type FieldType = {
 const Home = ({ theme, setTheme }: HomeProps) => {
     const api = useInfraccionApi();
     const [ infracciones, setInfracciones ] = useState<Infraccion[]>([]);
+    const [ cuilt, setCuil ] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+
     const labelColor = theme === 'dark' ? '#ccc' : '#000';
     const inputTextColor = theme === 'dark' ? '#000' : '#000';
     const inputBgColor = theme === 'dark' ? '#ffffff' : '#ffffff';
@@ -26,22 +30,29 @@ const Home = ({ theme, setTheme }: HomeProps) => {
 
     useEffect(() => {
         api.getToken().then(response => {
-            localStorage.setItem("_token", response.data!.value.token);            
+            localStorage.setItem("_token", response.data!.value.token);
         }).catch(error => console.log(`Error: ${error}`));
     }, []);
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         console.log('Success:', values.CuitCuil);
+        setLoading(true);
+        setCuil(true);
         const response = await api.list(values.CuitCuil!, localStorage.getItem("_token")!);
         setInfracciones(response.data!.value);
+        setLoading(false);
     };
-    
+
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
 
     useEffect(() => {
-        console.log("Infracciones: ", infracciones);
+        setCuil(false);        
+    }, []);
+
+    useEffect(() => {
+        console.log(infracciones.map(e => e));
     }, [infracciones]);
 
     return (
@@ -81,7 +92,26 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                         <Button type="primary" htmlType="submit" >Consultar</Button>
                     </Form.Item>
                 </Form>
-            </Space>
+            </Space>            
+            {
+                cuilt && infracciones.length > 0 ?
+                    <Table loading={loading} style={{ marginTop: 20 }} dataSource={infracciones.map((infraccion: Infraccion) => ({
+                        id: infraccion.NroTramite,
+                        key: infraccion.Id,
+                        fecha: moment(infraccion.FechaHora).format("DD/MM/YYYY"),
+                        motivo: infraccion.CodigoInfraccion?.Abreviatura
+                    }))} columns={[
+                        {
+                            title: "Nro. Acta",
+                            dataIndex: "id",
+                            key: "id"
+                        },                       
+                    ]} />
+                    : undefined
+            }
+            {
+                cuilt && infracciones.length === 0 ? <p>No hay registros de infracciones para ese Cuil/Cuit</p> : undefined
+            }
         </Content>
     )
 };
