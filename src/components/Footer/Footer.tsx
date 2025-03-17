@@ -25,7 +25,7 @@ const Footer = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetSta
     return (
         <div>
 
-        <Menu onClick = { onClick } selectedKeys = { [current] } mode = "horizontal" items = { items } theme = { props.theme } style = {{ padding: '13px 0', backgroundColor: backgroundColor }} />        
+        <Menu onClick = { onClick } selectedKeys = { [current] } mode = "horizontal" items = { items } theme = { props.theme } style = {{ padding: '13px 0', backgroundColor: backgroundColor }} className = "footer" />        
         </div>
     )
 };

@@ -20,14 +20,12 @@ const items: MenuItem[] = [
   {
     label: (<Link to={'/'}>Infracciones</Link>),
     key: 'infracciones',
-    icon: <CarOutlined />,
-    style: { color: 'white' },
+    icon: <CarOutlined />,    
   },
   {
     label: (<Link to={'/contact'}>Contacto</Link>),
     key: 'contact',
-    icon: <WhatsAppOutlined />,
-    style: { color: 'white' },
+    icon: <WhatsAppOutlined />,    
   }
 ];
 
@@ -36,7 +34,8 @@ const NavBar = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetSta
   const [current, setCurrent] = useState('');
   const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
-  let backgroundColor = props.theme === 'light' ? '#1d1d1d' : undefined  
+  let backgroundColor = props.theme === 'light' ? '#1d1d1d' : undefined
+  const labelColor = props.theme === 'dark' ? 'var(--label-color-light)' : 'var(--label-color-dark)';
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,7 +64,7 @@ const NavBar = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetSta
 
   return (
     <div>
-      <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items.filter(e => e?.key !== 'menu-sidebar')} theme = { props.theme } style={{ display: screenWidth <= 750 ? 'none' : 'flex', padding: '10px 0', backgroundColor: backgroundColor }} />
+      <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items.filter(e => e?.key !== 'menu-sidebar')} theme={props.theme} style={{ display: screenWidth <= 750 ? 'none' : 'flex', padding: '10px 0', backgroundColor: backgroundColor }} />
       <Menu
         defaultSelectedKeys={[current]}
         defaultOpenKeys={[current]}
@@ -73,18 +72,16 @@ const NavBar = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetSta
         theme={props.theme}
         inlineCollapsed={collapsed}
         items={items.filter(e => e?.key !== 'logo')}
-        style={{ marginLeft: 'auto', display: screenWidth <= 750 ? 'flex' : 'none', flexDirection: 'column', width: collapsed ? '15%' : '25%' }}
+        style={{ color: labelColor, marginLeft: 'auto', display: screenWidth <= 750 ? 'flex' : 'none', flexDirection: 'column', width: collapsed ? '15%' : '30%', position: 'absolute', top: 0, left: 0, zIndex: 1000, height: '20vh', boxShadow: 'none', border: 'none', backgroundColor: 'rgba(0, 21, 41, 0.3)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(20px)', transition: 'all 0.3s ease' }}
         onClick={onClick}
       />
-      <div style={{ margin: '15px 15px' }}>
-        <Switch
+      <Switch
           checked={props.theme === 'dark'}
           onChange={changeTheme}
           checkedChildren="Dark"
           unCheckedChildren="Light"
-          style={{ display: 'flex', marginLeft: 'auto' }}
+          style={{ display: 'flex', marginRight: 'auto', position: 'fixed', top: '100px', right: '20px', zIndex: 10 }}
         />
-      </div>
     </div>
   )
 };

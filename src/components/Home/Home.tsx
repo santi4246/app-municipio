@@ -24,7 +24,10 @@ const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
 
 const Home = ({ theme, setTheme }: HomeProps) => {
     const labelColor = theme === 'dark' ? '#ccc' : '#000';
-    
+    const inputTextColor = theme === 'dark' ? '#000' : '#000';  // Mantener el texto negro para ambos modos
+    const inputBgColor = theme === 'dark' ? '#ffffff' : '#ffffff';  // Fondo blanco para los inputs en ambos modos
+    const inputBorderColor = theme === 'dark' ? '#555555' : '#d9d9d9'; // Ajustar borde según el tema
+
     useEffect(() => {
         console.log("Tema: ", theme);
     }, []);
@@ -50,10 +53,16 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                         required
                         name={"CuitCuil"}
                         label="Ingrese el Cuit/Cuil a consultar sin guiones ni espacioes"
-                        style = {{ color: labelColor }}
-                        className = 'ant-form-item-label'
+                        style={{ color: labelColor, wordWrap: 'break-word', lineHeight: '1.5', width: '100%', fontSize: '0.8rem' }}
+                        className='ant-form-item-label'
                     >
-                        <Input />
+                        <Input 
+                        style={{
+                            color: inputTextColor,
+                            backgroundColor: inputBgColor,
+                            borderColor: inputBorderColor
+                          }}
+                        />
                     </Form.Item>
                     <Form.Item label={null} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <Button type="primary" htmlType="submit" >Consultar</Button>
