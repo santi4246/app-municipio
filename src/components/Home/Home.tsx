@@ -1,5 +1,5 @@
 import type { FormProps } from 'antd';
-import { Button, Form, Input, MenuTheme, Space, Table, } from 'antd';
+import { Button, Flex, Form, Input, MenuTheme, Space, Table, } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import { Content } from 'antd/es/layout/layout';
 import "../../App.css";
@@ -19,14 +19,16 @@ type FieldType = {
 
 const Home = ({ theme, setTheme }: HomeProps) => {
     const api = useInfraccionApi();
-    const [ infracciones, setInfracciones ] = useState<Infraccion[]>([]);
-    const [ cuilt, setCuil ] = useState<boolean>(false);
+    const [infracciones, setInfracciones] = useState<Infraccion[]>([]);
+    const [cuil, setCuil] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
     const labelColor = theme === 'dark' ? '#ccc' : '#000';
     const inputTextColor = theme === 'dark' ? '#000' : '#000';
     const inputBgColor = theme === 'dark' ? '#ffffff' : '#ffffff';
     const inputBorderColor = theme === 'dark' ? '#555555' : '#d9d9d9';
+    const tableHeaderColor = theme === 'dark' ? '#000' : '#fff';
+    const tableCellColor = theme === 'dark' ? '#000' : '#fff';
 
     useEffect(() => {
         api.getToken().then(response => {
@@ -37,7 +39,9 @@ const Home = ({ theme, setTheme }: HomeProps) => {
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         console.log('Success:', values.CuitCuil);
         setLoading(true);
-        setCuil(true);
+        setTimeout(() => {
+            setCuil(true);
+        }, 500);
         const response = await api.list(values.CuitCuil!, localStorage.getItem("_token")!);
         setInfracciones(response.data!.value);
         setLoading(false);
@@ -48,7 +52,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
     };
 
     useEffect(() => {
-        setCuil(false);        
+        setCuil(false);
     }, []);
 
     useEffect(() => {
@@ -65,7 +69,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                     }}
                     labelCol={{ span: 24 }}
                     wrapperCol={{ span: 24 }}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', maxWidth: '500px' }}
                     autoComplete="off"
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
@@ -76,7 +80,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                         ]}
                         required
                         name={"CuitCuil"}
-                        label="Ingrese el Cuit/Cuil a consultar sin guiones ni espacioes"
+                        label="Ingrese el Cuil/Cuit a consultar sin guiones ni espacioes"
                         style={{ color: labelColor, wordWrap: 'break-word', lineHeight: '1.5', width: '100%', fontSize: '0.8rem' }}
                         className='ant-form-item-label'
                     >
@@ -92,25 +96,89 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                         <Button type="primary" htmlType="submit" >Consultar</Button>
                     </Form.Item>
                 </Form>
-            </Space>            
+            </Space>
             {
-                cuilt && infracciones.length > 0 ?
-                    <Table loading={loading} style={{ marginTop: 20 }} dataSource={infracciones.map((infraccion: Infraccion) => ({
-                        id: infraccion.NroTramite,
-                        key: infraccion.Id,
-                        fecha: moment(infraccion.FechaHora).format("DD/MM/YYYY"),
-                        motivo: infraccion.CodigoInfraccion?.Abreviatura
-                    }))} columns={[
-                        {
-                            title: "Nro. Acta",
-                            dataIndex: "id",
-                            key: "id"
-                        },                       
-                    ]} />
-                    : undefined
+                cuil && infracciones.length > 0 ?
+                    <Space className='table'>
+                        <div>
+                            <Table
+                                loading={loading}
+                                dataSource={infracciones.map((e: Infraccion) => ({
+                                    id: e.NroTramite,
+                                    fechaCreacion: moment(e.FechaHora).format("DD/MM/YYYY"),
+                                    dominio: e.Titular.PatenteVehiculo,
+                                    nombreInfractor: e.Titular.NombreCompletoTitular,
+                                    cuilCuitInfractor: e.Titular.CuilTitular,
+                                    direccionInfractor: e.Titular.DireccionCompletaTitular,
+                                    dniInfractor: e.Titular.DocumentoTitular ? e.Titular.DocumentoTitular : "-"
+                                }))}
+                                columns={[
+                                    {
+                                        title: "Fecha",
+                                        dataIndex: "fechaCreacion",
+                                        key: "fechaCreacion",
+                                        render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
+                                        width: 150,
+                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                    },
+                                    {
+                                        title: "Nro. Acta",
+                                        dataIndex: "id",
+                                        key: "id",
+                                        render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
+                                        width: 150,
+                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                    },
+                                    {
+                                        title: "Dominio",
+                                        dataIndex: "dominio",
+                                        key: "dominio",
+                                        render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
+                                        width: 150,
+                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                    },
+                                    {
+                                        title: "Nombre completo",
+                                        dataIndex: "nombreInfractor",
+                                        key: "nombreInfractor",
+                                        render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
+                                        width: 200,
+                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                    },
+                                    {
+                                        title: "Cuil/Cuit",
+                                        dataIndex: "cuilCuitInfractor",
+                                        key: "cuilCuitInfractor",
+                                        render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
+                                        width: 150,
+                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                    }
+                                ]}
+                                rowClassName="ant-table-row"
+                                pagination={false}
+                                scroll={{ x: "max-content", y: "60vh" }}
+                                style={{ width: "100%" }}
+                                components={{
+                                    body: {
+                                      cell: (props) => (
+                                        <td
+                                          {...props}
+                                          style={{
+                                            ...props.style,
+                                            color: tableCellColor,
+                                            wordBreak: "break-word",
+                                            textAlign: 'center'
+                                          }}
+                                        />
+                                      ),
+                                    }
+                                  }}
+                            />
+                        </div>
+                    </Space> : null
             }
             {
-                cuilt && infracciones.length === 0 ? <p>No hay registros de infracciones para ese Cuil/Cuit</p> : undefined
+                cuil && infracciones.length === 0 ? <p>No hay registros de infracciones para ese Cuil/Cuit</p> : undefined
             }
         </Content>
     )
