@@ -3,7 +3,7 @@ import { Button, Flex, Form, Input, MenuTheme, Space, Table, } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import { Content } from 'antd/es/layout/layout';
 import "../../App.css";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useInfraccionApi, { Infraccion } from '../../hooks/useInfraccionApi';
 import moment from 'moment';
 
@@ -18,7 +18,10 @@ type FieldType = {
 };
 
 const Home = ({ theme, setTheme }: HomeProps) => {
+    const tableRef = useRef<HTMLDivElement>(null);
+    const [tableHeight, setTableHeight] = useState<number>(0);
     const api = useInfraccionApi();
+    const [ isMobile, setIsMobile ] = useState<boolean>(false);
     const [infracciones, setInfracciones] = useState<Infraccion[]>([]);
     const [cuil, setCuil] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -27,8 +30,8 @@ const Home = ({ theme, setTheme }: HomeProps) => {
     const inputTextColor = theme === 'dark' ? '#000' : '#000';
     const inputBgColor = theme === 'dark' ? '#ffffff' : '#ffffff';
     const inputBorderColor = theme === 'dark' ? '#555555' : '#d9d9d9';
-    const tableHeaderColor = theme === 'dark' ? '#000' : '#fff';
-    const tableCellColor = theme === 'dark' ? '#000' : '#fff';
+    const tableHeaderColor = theme === 'dark' ? '#000' : '#000';
+    const tableCellColor = theme === 'dark' ? '#000' : '#000';
 
     useEffect(() => {
         api.getToken().then(response => {
@@ -36,12 +39,25 @@ const Home = ({ theme, setTheme }: HomeProps) => {
         }).catch(error => console.log(`Error: ${error}`));
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 750);
+        };
+    
+        window.addEventListener('resize', handleResize);
+        handleResize();
+    
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
         console.log('Success:', values.CuitCuil);
         setLoading(true);
         setTimeout(() => {
             setCuil(true);
-        }, 500);
+        }, 1500);
         const response = await api.list(values.CuitCuil!, localStorage.getItem("_token")!);
         setInfracciones(response.data!.value);
         setLoading(false);
@@ -55,8 +71,10 @@ const Home = ({ theme, setTheme }: HomeProps) => {
         setCuil(false);
     }, []);
 
-    useEffect(() => {
-        console.log(infracciones.map(e => e));
+    useEffect(() => {        
+        if (tableRef.current) {
+            setTableHeight(tableRef.current.clientHeight);
+        }
     }, [infracciones]);
 
     return (
@@ -119,7 +137,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                         key: "fechaCreacion",
                                         render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
                                         width: 150,
-                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                        onHeaderCell: () => ({ style: { backgroundColor: "#ccc", color: tableCellColor, textAlign: "center" } })
                                     },
                                     {
                                         title: "Nro. Acta",
@@ -127,7 +145,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                         key: "id",
                                         render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
                                         width: 150,
-                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                        onHeaderCell: () => ({ style: { backgroundColor: "#ccc", color: tableCellColor, textAlign: "center" } })
                                     },
                                     {
                                         title: "Dominio",
@@ -135,7 +153,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                         key: "dominio",
                                         render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
                                         width: 150,
-                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                        onHeaderCell: () => ({ style: { backgroundColor: "#ccc", color: tableCellColor, textAlign: "center" } })
                                     },
                                     {
                                         title: "Nombre completo",
@@ -143,7 +161,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                         key: "nombreInfractor",
                                         render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
                                         width: 200,
-                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                        onHeaderCell: () => ({ style: { backgroundColor: "#ccc", color: tableCellColor, textAlign: "center" } })
                                     },
                                     {
                                         title: "Cuil/Cuit",
@@ -151,12 +169,16 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                         key: "cuilCuitInfractor",
                                         render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
                                         width: 150,
-                                        onHeaderCell: () => ({ style: { color: tableCellColor, textAlign: "center" } })
+                                        onHeaderCell: () => ({ style: { backgroundColor: "#ccc", color: tableCellColor, textAlign: "center" } })
                                     }
                                 ]}
                                 rowClassName="ant-table-row"
                                 pagination={false}
-                                scroll={{ x: "max-content", y: "60vh" }}
+                                /* scroll={{ x: "100%", y: undefined }} */
+                                /* scroll={{
+                                    x: isMobile ? '100%' : 'max-content', // Cambia el comportamiento según el tamaño de la pantalla
+                                    y: isMobile ? '50vh' : undefined // Mantiene el scroll vertical en pantallas móviles
+                                }} */
                                 style={{ width: "100%" }}
                                 components={{
                                     body: {
