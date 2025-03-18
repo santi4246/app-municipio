@@ -32,31 +32,45 @@ body {
 
 .space {
   padding: 20px;
+  flex-wrap: wrap;
+  overflow: hidden;
 }
 
-@media(max-width: 750px) {
+.table {
+  max-width: 70%;
+  flex-wrap: wrap;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+@media (max-width: 750px) {
   .content {
-    min-height: 90vh;
+    height: 90vh;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .space {
-    display: flex;
-    flex-wrap: nowrap;
-    margin-top: 100px;
-    width: 65%;
-    white-space: nowrap;    
-    overflow: hidden;    
-    text-overflow: ellipsis;    
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
   }
-  
+
   .footer {
     height: 10vh;
   }
 }
 
-@media(max-width: 400px) {
-  .space {
-    margin-top: 200px;
-    width: 100%;
+@media (max-width: 400px) {
+  .content {    
+    padding: 5px;
   }
+
+  .space {
+    margin-top: 20px;
+    padding: 5px;
+  }  
 }
