@@ -12,6 +12,12 @@ interface LayoutProps {
 const MainLayout = ({ children }: LayoutProps) => {
   const [theme, setTheme] = useState<MenuTheme>('dark');
   const themeConfig = {
+    components: {
+      Table: {
+        headerBorderRadius: 0,
+        borderRadius: 0,        
+      },
+    },
     token: {        
         colorTextBase: theme === 'dark' ? '#fff' : '#000',
         colorLabel: theme === 'dark' ? '#ccc' : '#000',
