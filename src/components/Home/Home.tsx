@@ -1,12 +1,11 @@
 import type { FormProps } from 'antd';
-import { Button, Flex, Form, Input, MenuTheme, Space, Table, } from 'antd';
+import { Button, Form, Input, MenuTheme, Space, Table, } from 'antd';
 import '@ant-design/v5-patch-for-react-19';
 import { Content } from 'antd/es/layout/layout';
 import "../../App.css";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useInfraccionApi, { Infraccion } from '../../hooks/useInfraccionApi';
 import moment from 'moment';
-
 
 interface HomeProps {
     theme: MenuTheme;
@@ -17,11 +16,8 @@ type FieldType = {
     CuitCuil?: string;
 };
 
-const Home = ({ theme, setTheme }: HomeProps) => {
-    const tableRef = useRef<HTMLDivElement>(null);
-    const [tableHeight, setTableHeight] = useState<number>(0);
-    const api = useInfraccionApi();
-    const [ isMobile, setIsMobile ] = useState<boolean>(false);
+const Home = ({ theme, setTheme }: HomeProps) => {        
+    const api = useInfraccionApi();    
     const [infracciones, setInfracciones] = useState<Infraccion[]>([]);
     const [cuil, setCuil] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -37,23 +33,9 @@ const Home = ({ theme, setTheme }: HomeProps) => {
         api.getToken().then(response => {
             localStorage.setItem("_token", response.data!.value.token);
         }).catch(error => console.log(`Error: ${error}`));
-    }, []);
+    }, []);    
 
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 750);
-        };
-    
-        window.addEventListener('resize', handleResize);
-        handleResize();
-    
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
-        console.log('Success:', values.CuitCuil);
+    const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {        
         setLoading(true);
         setTimeout(() => {
             setCuil(true);
@@ -70,12 +52,6 @@ const Home = ({ theme, setTheme }: HomeProps) => {
     useEffect(() => {
         setCuil(false);
     }, []);
-
-    useEffect(() => {        
-        if (tableRef.current) {
-            setTableHeight(tableRef.current.clientHeight);
-        }
-    }, [infracciones]);
 
     return (
         <Content className='content' style={{ backgroundColor: theme === 'dark' ? 'var(--primary-color)' : 'var(--secondary-color)' }}>
@@ -116,12 +92,13 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                 </Form>
             </Space>
             {
-                cuil && infracciones.length > 0 ?
+                cuil && infracciones.length > 0 ?                
                     <Space className='table'>
                         <div>
                             <Table
                                 loading={loading}
                                 dataSource={infracciones.map((e: Infraccion) => ({
+                                    key: e.NroTramite,
                                     id: e.NroTramite,
                                     fechaCreacion: moment(e.FechaHora).format("DD/MM/YYYY"),
                                     dominio: e.Titular.PatenteVehiculo,
@@ -129,14 +106,14 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                     cuilCuitInfractor: e.Titular.CuilTitular,
                                     direccionInfractor: e.Titular.DireccionCompletaTitular,
                                     dniInfractor: e.Titular.DocumentoTitular ? e.Titular.DocumentoTitular : "-"
-                                }))}
+                                }))}                                
                                 columns={[
                                     {
                                         title: "Fecha",
                                         dataIndex: "fechaCreacion",
                                         key: "fechaCreacion",
                                         render: (text) => <span style={{ color: tableHeaderColor }}>{text}</span>,
-                                        width: 150,
+                                        width: 150,                                        
                                         onHeaderCell: () => ({ style: { backgroundColor: "#ccc", color: tableCellColor, textAlign: "center" } })
                                     },
                                     {
@@ -173,13 +150,8 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                     }
                                 ]}
                                 rowClassName="ant-table-row"
-                                pagination={false}
-                                /* scroll={{ x: "100%", y: undefined }} */
-                                /* scroll={{
-                                    x: isMobile ? '100%' : 'max-content', // Cambia el comportamiento según el tamaño de la pantalla
-                                    y: isMobile ? '50vh' : undefined // Mantiene el scroll vertical en pantallas móviles
-                                }} */
-                                style={{ width: "100%" }}
+                                size = 'middle'
+                                pagination={{ pageSize: 5, position: ['bottomRight'] }}                                                                
                                 components={{
                                     body: {
                                       cell: (props) => (
@@ -189,7 +161,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                                             ...props.style,
                                             color: tableCellColor,
                                             wordBreak: "break-word",
-                                            textAlign: 'center'
+                                            textAlign: 'center',                                            
                                           }}
                                         />
                                       ),

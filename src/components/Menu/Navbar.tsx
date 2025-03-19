@@ -80,7 +80,7 @@ const NavBar = (props: { theme: MenuTheme, setTheme: React.Dispatch<React.SetSta
           onChange={changeTheme}
           checkedChildren="Dark"
           unCheckedChildren="Light"
-          style={{ display: 'flex', marginRight: 'auto', position: 'fixed', top: '100px', right: '20px', zIndex: 10 }}
+          style={{ display: 'flex', marginRight: 'auto', position: 'fixed', top: screenWidth <= 400 ? '15px' : '100px', right: screenWidth <= 400 ? '5px' : '20px', zIndex: 10 }}          
         />
     </div>
   )

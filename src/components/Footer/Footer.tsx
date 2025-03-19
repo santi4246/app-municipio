@@ -8,7 +8,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const items: MenuItem[] = [  
   {
-    label: (<span dangerouslySetInnerHTML={{__html: `Neuraltech ${now.year()} &#174;`,}}
+    label: (<span dangerouslySetInnerHTML={{__html: `Municipio de ${process.env.REACT_APP_NOMBRE_MUNICIPIO} ${now.year()} &#174;`,}}
         />
       ),
     key: 'logo-footer',
