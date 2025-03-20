@@ -1,8 +1,8 @@
+import "../../App.css";
+import '@ant-design/v5-patch-for-react-19';
 import type { FormProps } from 'antd';
 import { Button, Form, Input, MenuTheme, Space, Table, } from 'antd';
-import '@ant-design/v5-patch-for-react-19';
 import { Content } from 'antd/es/layout/layout';
-import "../../App.css";
 import { useEffect, useState } from 'react';
 import useInfraccionApi, { Infraccion } from '../../hooks/useInfraccionApi';
 import moment from 'moment';
@@ -33,7 +33,11 @@ const Home = ({ theme, setTheme }: HomeProps) => {
         api.getToken().then(response => {
             localStorage.setItem("_token", response.data!.value.token);
         }).catch(error => console.log(`Error: ${error}`));
-    }, []);    
+    }, []);
+
+    useEffect(() => {
+        setCuil(false);
+    }, []);
 
     const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {        
         setLoading(true);
@@ -48,10 +52,6 @@ const Home = ({ theme, setTheme }: HomeProps) => {
     const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-
-    useEffect(() => {
-        setCuil(false);
-    }, []);
 
     return (
         <Content className='content' style={{ backgroundColor: theme === 'dark' ? 'var(--primary-color)' : 'var(--secondary-color)' }}>
@@ -74,7 +74,7 @@ const Home = ({ theme, setTheme }: HomeProps) => {
                         ]}
                         required
                         name={"CuitCuil"}
-                        label="Ingrese el Cuil/Cuit a consultar sin guiones ni espacioes"
+                        label="Ingrese el Cuil/Cuit a consultar sin guiones ni espacios"
                         style={{ color: labelColor, wordWrap: 'break-word', lineHeight: '1.5', width: '100%', fontSize: '0.8rem' }}
                         className='ant-form-item-label'
                     >

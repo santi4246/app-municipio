@@ -61,11 +61,11 @@ body {
     padding: 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
   }
 
-  .space {
+  .space {    
     flex-direction: column;
     align-items: center;
     width: 70%;
@@ -75,6 +75,16 @@ body {
     width: 80%;
     max-width: 80%;
     overflow-x: auto;
+  }
+
+  .title-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    justify-items: center;
+    justify-self: center;
+    width: 50%;
+    margin-top: 20px;
   }
 
   .footer {
@@ -90,5 +100,6 @@ body {
   .space {
     margin-top: 20px;
     padding: 5px;
-  }  
+  }
+
 }
